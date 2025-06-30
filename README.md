@@ -1,8 +1,32 @@
 # TPU Model Deployment Collection
 
-This repository contains a collection of Jupyter notebooks demonstrating how to deploy and serve large language models (LLMs) on Google Cloud TPUs using Vertex AI and vLLM.
+This repository contains a collection of Jupyter notebooks demonstrating how to deploy and serve large language models (LLMs) on Google Cloud TPUs using Vertex AI and vLLM. The main focus is on the latest **tpu_v6e_with_report.ipynb** notebook, which demonstrates deployment and performance testing of Llama 3.1 8B on TPU v6e (Trillium) with comprehensive benchmarking results.
 
 ## 📚 Notebooks Overview
+
+### 🚀 Main Notebook: tpu_v6e_with_report.ipynb
+**Vertex AI Model Garden - Llama 3.1 8B Deployment with Performance Testing on TPU v6e**
+
+- **Purpose**: Deploy and comprehensively test Llama 3.1 8B model on TPU v6e (Trillium) with detailed performance analysis
+- **Key Features**:
+  - Complete deployment workflow for Llama 3.1 8B on single TPU v6e
+  - Comprehensive performance testing with multiple concurrency levels
+  - Detailed latency and throughput benchmarking
+  - Professional performance reports with CSV and Markdown outputs
+  - Error handling and retry logic for production readiness
+- **TPU Configuration**: 1 TPU v6e (ct6e-standard-1t)
+- **Region**: europe-west4
+- **Performance Results**:
+  - **TTFT (Time to First Token)**: 0.276s (p95)
+  - **Inter-token Latency**: 0.050s (p95)
+  - **Token Output Throughput**: 1,112 tokens/sec
+  - **Success Rate**: 100% (50 requests, 250 concurrent users)
+  - **End-to-End Latency**: 13.8s (p95)
+- **Test Configuration**:
+  - Input tokens: ~82 tokens average
+  - Output tokens: ~309 tokens average
+  - Temperature: 0.7
+  - Max tokens: 350
 
 ### 1. v3-qwen.ipynb
 **Vertex AI Model Garden - Llama 3.1 and Qwen2.5 Models Deployment**
@@ -90,12 +114,63 @@ This repository contains a collection of Jupyter notebooks demonstrating how to 
 
 ### Model Requirements
 
-| Model | TPU Type | TPU Count | Machine Type | Notebook |
-|-------|----------|-----------|--------------|----------|
-| Qwen2.5 1.5B | TPU v5e | 1 | ct5lp-hightpu-1t | v1.ipynb, v3.ipynb, v3-qwen.ipynb |
-| Llama 3.1 8B | TPU v5e | 4 | ct5lp-hightpu-4t | v3.ipynb, v3-qwen.ipynb |
-| Llama 3.1 8B | TPU v6e | 1 | ct6e-standard-1t | TPUv6_v1.ipynb |
-| Qwen3 32B | TPU v6e | 4 | ct6e-standard-4t | TPUv6_v1.ipynb |
+| Model | TPU Type | TPU Count | Machine Type | Notebook | Performance |
+|-------|----------|-----------|--------------|----------|-------------|
+| **Llama 3.1 8B** | **TPU v6e** | **1** | **ct6e-standard-1t** | **tpu_v6e_with_report.ipynb** | **1,112 tok/sec, 0.276s TTFT** |
+| Qwen2.5 1.5B | TPU v5e | 1 | ct5lp-hightpu-1t | v1.ipynb, v3.ipynb, v3-qwen.ipynb | Not benchmarked |
+| Llama 3.1 8B | TPU v5e | 4 | ct5lp-hightpu-4t | v3.ipynb, v3-qwen.ipynb | Not benchmarked |
+| Llama 3.1 8B | TPU v6e | 1 | ct6e-standard-1t | TPUv6_v1.ipynb | Not benchmarked |
+| Qwen3 32B | TPU v6e | 4 | ct6e-standard-4t | TPUv6_v1.ipynb | Not benchmarked |
+
+## 📊 Performance Testing Results
+
+The **tpu_v6e_with_report.ipynb** notebook includes comprehensive performance testing capabilities with detailed benchmarking results for Llama 3.1 8B on TPU v6e.
+
+### Test Results Summary
+Based on load testing with 250 concurrent users and 50 requests:
+
+| Metric | Value | Target/Benchmark |
+|--------|-------|------------------|
+| **TTFT (p50)** | 0.276s | < 0.9s ✅ |
+| **TTFT (p95)** | 0.277s | < 0.9s ✅ |
+| **Inter-token Latency (p95)** | 0.050s | < 0.17s ✅ |
+| **End-to-End Latency (p95)** | 13.8s | Variable |
+| **Token Output Throughput** | 1,112 tok/sec | > 10 tok/sec ✅ |
+| **Overall Token Throughput** | 1,407 tok/sec | > 1,500 tok/sec ⚠️ |
+| **Requests per Second** | 3.61 req/sec | Variable |
+| **Success Rate** | 100% | > 95% ✅ |
+
+### Performance Testing Features
+
+The notebook includes advanced performance testing capabilities:
+
+- **Load Testing**: Configurable concurrent users and request volumes
+- **Metrics Collection**: TTFT, inter-token latency, throughput measurements
+- **Error Handling**: Retry logic for 502 errors and timeout handling
+- **Report Generation**: Automated CSV and Markdown report generation
+- **Multiple Test Scenarios**: From small-scale (5 concurrent) to high-load (250 concurrent) testing
+
+### Test Configuration Options
+
+```python
+TEST_CONFIG = {
+    'concurrent_users': 250,    # Configurable concurrency
+    'total_requests': 50,       # Total test requests
+    'input_token_length': 265,  # Target input length
+    'output_tokens': 317,       # Target output length
+    'temperature': 0.7,         # Sampling temperature
+    'max_tokens': 350,          # Maximum output tokens
+}
+```
+
+### Generated Reports
+
+The performance testing generates multiple output formats:
+
+1. **Summary CSV**: High-level metrics and aggregated results
+2. **Detailed CSV**: Per-request detailed performance data
+3. **Markdown Report**: Professional formatted performance analysis
+4. **Console Output**: Real-time progress and results
 
 ## 🔧 Technical Details
 
